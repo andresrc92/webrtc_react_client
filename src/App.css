@@ -1,0 +1,241 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: #14171c;
+  border-bottom: 1px solid #23272e;
+}
+
+.app-header-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.app-header h1 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.app-header-subtitle {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.disconnect-button {
+  background: #3a1f24;
+  color: #f2a1ab;
+  border: 1px solid #5c2b33;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+
+.disconnect-button:hover {
+  background: #4a262c;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  position: relative;
+}
+
+.connect-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  width: min(420px, 90vw);
+  background: #14171c;
+  border: 1px solid #23272e;
+  border-radius: 10px;
+  padding: 1.5rem;
+  /* Advanced options are part of this card, not a separate overlay — keep
+     everything inside it from ever escaping the card's own box. */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.connect-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #9aa1ab;
+  min-width: 0;
+}
+
+.connect-form input {
+  background: #0b0d10;
+  border: 1px solid #2c313a;
+  border-radius: 6px;
+  padding: 0.5rem 0.6rem;
+  color: #e6e8eb;
+  font-size: 0.95rem;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.connect-form input:focus {
+  outline: 2px solid #4f8cff;
+  outline-offset: 1px;
+}
+
+.field-hint {
+  margin: -0.5rem 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: #6ea8ff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.link-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  color: #6ea8ff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+}
+
+.advanced-toggle-chevron {
+  display: inline-block;
+  font-size: 0.7rem;
+  transition: transform 0.15s ease;
+}
+
+.advanced-toggle-chevron.open {
+  transform: rotate(90deg);
+}
+
+.advanced-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  border: 1px solid #23272e;
+  border-radius: 8px;
+  padding: 0.75rem 0.75rem 0.9rem;
+  margin: 0;
+}
+
+.field-group legend {
+  padding: 0 0.35rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+}
+
+.field-row {
+  display: flex;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.field-row label {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.connect-form button[type='submit'] {
+  background: #2e5fd9;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.connect-form button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stream-viewer {
+  position: absolute;
+  inset: 0;
+  background: black;
+}
+
+.stream-viewer video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: black;
+}
+
+.stream-viewer audio {
+  display: none;
+}
+
+.stream-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(11, 13, 16, 0.72);
+}
+
+.status-overlay {
+  text-align: center;
+  padding: 1.25rem 1.75rem;
+  border-radius: 10px;
+  background: #14171c;
+  border: 1px solid #23272e;
+}
+
+.status-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.status-error .status-label {
+  color: #f2a1ab;
+}
+
+.status-detail {
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: #9aa1ab;
+  max-width: 320px;
+}

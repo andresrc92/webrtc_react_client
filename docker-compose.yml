@@ -1,0 +1,52 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+      args:
+        VITE_ISAAC_SIM_SERVER: ${ISAAC_SIM_HOST}
+        VITE_ISAAC_SIM_SIGNAL_PORT: ${ISAAC_SIGNAL_PORT:-49100}
+        VITE_ISAAC_SIM_MEDIA_PORT: ${ISAAC_MEDIA_PORT:-47998}
+        VITE_SIGNALING_SERVER: ${PUBLIC_HOSTNAME}
+        VITE_SIGNALING_PATH: /ws/signaling
+        VITE_FORCE_WSS: "true"
+    restart: unless-stopped
+
+  proxy:
+    image: caddy:2-alpine
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      PUBLIC_HOSTNAME: ${PUBLIC_HOSTNAME}
+      ISAAC_SIM_HOST: ${ISAAC_SIM_HOST}
+      ISAAC_SIGNAL_PORT: ${ISAAC_SIGNAL_PORT:-49100}
+    restart: unless-stopped
+
+  # TURN relay for browsers that can't reach Isaac Sim's media port directly
+  # (typical when either side is behind NAT). Host networking is required so
+  # coturn can hand out its own public IP in ICE candidates.
+  coturn:
+    image: coturn/coturn:latest
+    network_mode: host
+    command: >
+      -n
+      --listening-port=3478
+      --fingerprint
+      --lt-cred-mech
+      --user=${TURN_USERNAME}:${TURN_PASSWORD}
+      --realm=${PUBLIC_HOSTNAME}
+      --min-port=49152
+      --max-port=65535
+      --no-cli
+    restart: unless-stopped
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,22 @@
+{
+  "name": "isaac-sim-webrtc-client",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "forwardPorts": [5173, 4173],
+  "portsAttributes": {
+    "5173": { "label": "Vite dev server", "onAutoForward": "notify" },
+    "4173": { "label": "Vite preview", "onAutoForward": "silent" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      }
+    }
+  },
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}

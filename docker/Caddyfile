@@ -1,0 +1,16 @@
+{$PUBLIC_HOSTNAME} {
+    encode gzip
+
+    # Signaling only — WebRTC media (audio/video) is negotiated over ICE and
+    # flows directly between the browser and Isaac Sim/coturn, not through
+    # this proxy. This route just gets the WebSocket handshake past the
+    # browser's mixed-content block when the app is served over HTTPS.
+    handle /ws/signaling* {
+        uri strip_prefix /ws/signaling
+        reverse_proxy {$ISAAC_SIM_HOST}:{$ISAAC_SIGNAL_PORT}
+    }
+
+    handle {
+        reverse_proxy web:80
+    }
+}
