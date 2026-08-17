@@ -58,6 +58,10 @@ export function StreamViewer({ target, onStateChange }: StreamViewerProps) {
       signalingServer: defaultStreamConfig.signalingServer,
       signalingPath: defaultStreamConfig.signalingPath,
       forceWSS: defaultStreamConfig.forceWSS,
+      // Isaac Sim livestream is single-session: auto-reconnects make it re-init
+      // its capture device and wedge the stream for ALL clients. Default 0 so
+      // we make one clean attempt. See config.ts / README troubleshooting.
+      maxReconnects: defaultStreamConfig.maxReconnects,
       width: target.width,
       height: target.height,
       fps: target.fps,
@@ -91,6 +95,9 @@ export function StreamViewer({ target, onStateChange }: StreamViewerProps) {
       streamConfig,
     };
 
+    // NOTE: AppStreamer is a stateful singleton driving a single capture thread
+    // on the Isaac Sim side, so connect() must run exactly once per mount. This
+    // is why the app does not use React.StrictMode — see src/main.tsx.
     AppStreamer.connect(props).catch((err: StreamEvent) => {
       if (cancelled) return;
       updateState('error', describe(err));

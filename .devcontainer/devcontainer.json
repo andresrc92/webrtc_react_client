@@ -3,10 +3,9 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "forwardPorts": [5173, 4173],
+  "forwardPorts": [5555],
   "portsAttributes": {
-    "5173": { "label": "Vite dev server", "onAutoForward": "notify" },
-    "4173": { "label": "Vite preview", "onAutoForward": "silent" }
+    "5555": { "label": "Vite dev server", "onAutoForward": "notify" }
   },
   "customizations": {
     "vscode": {

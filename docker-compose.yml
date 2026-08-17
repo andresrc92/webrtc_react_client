@@ -9,7 +9,7 @@ services:
         VITE_ISAAC_SIM_MEDIA_PORT: ${ISAAC_MEDIA_PORT:-47998}
         VITE_SIGNALING_SERVER: ${PUBLIC_HOSTNAME}
         VITE_SIGNALING_PATH: /ws/signaling
-        VITE_FORCE_WSS: "true"
+        VITE_FORCE_WSS: "false"
     restart: unless-stopped
 
   proxy:

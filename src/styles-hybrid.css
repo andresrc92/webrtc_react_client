@@ -1,0 +1,494 @@
+/* Hybrid layout (design-hybrid-refined-dark). Reuses the design tokens and
+   panel classes from styles.css; only adds the shell, stepper, fleet strip, and
+   horizontal timeline that this layout introduces. */
+
+.hybrid {
+  /* Teal accent + deeper panels to match the hybrid mockup, scoped here so the
+     default console keeps its blue theme. */
+  --accent: #0d9488;
+  --accent-soft: rgba(13, 148, 136, 0.12);
+  --accent-line: rgba(13, 148, 136, 0.45);
+  --panel: #f7f9fc;
+  --panel-active: #eef3f9;
+  --border: #cfd6e2;
+  /* Content-sized column: cards stack tightly, timeline sits directly under
+     them (no flex-grown empty band between body and timeline). */
+  box-sizing: border-box;
+  min-height: 100dvh;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 22px 26px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hybrid__chrome {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 0 0 auto;
+}
+
+/* Themed scrollbars (Firefox + Chromium/WebKit) so rails don't use the OS chrome. */
+.hybrid,
+.hybrid * {
+  scrollbar-width: thin;
+  scrollbar-color: #b0bac8 var(--panel);
+}
+.hybrid::-webkit-scrollbar,
+.hybrid *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.hybrid::-webkit-scrollbar-track,
+.hybrid *::-webkit-scrollbar-track {
+  background: var(--panel);
+  border-radius: 8px;
+}
+.hybrid::-webkit-scrollbar-thumb,
+.hybrid *::-webkit-scrollbar-thumb {
+  background: #b0bac8;
+  border-radius: 8px;
+  border: 2px solid var(--panel);
+}
+.hybrid::-webkit-scrollbar-thumb:hover,
+.hybrid *::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-line);
+}
+.hybrid::-webkit-scrollbar-corner,
+.hybrid *::-webkit-scrollbar-corner {
+  background: var(--panel);
+}
+
+/* A touch more breathing room inside every panel for the airier hybrid look. */
+.hybrid .panel {
+  padding: 20px;
+}
+
+/* The base "active" pill is hard-coded blue; retint to the hybrid's teal. */
+.hybrid .pill--active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+/* Top bar */
+.hybrid__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hybrid__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hybrid__logo {
+  color: var(--accent);
+  font-size: 20px;
+}
+.hybrid__bar h1 {
+  font-size: 18px;
+  margin: 0;
+}
+.hybrid__status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.dot--idle {
+  background: var(--muted);
+}
+
+/* Horizontal stepper */
+.hstepper {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 18px 22px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.hstep {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+/* The last step has no trailing connector line, so don't let it claim an equal
+   flex slot — size it to its content and let the preceding steps' lines stretch
+   to fill the row. Otherwise it leaves a big gap to its right. */
+.hstep:last-child {
+  flex: 0 0 auto;
+}
+.hstep__node {
+  display: flex;
+  align-items: center;
+}
+.hstep__marker {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  background: transparent;
+  border: 2px solid var(--border);
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.hstep__line {
+  flex: 1;
+  height: 2px;
+  margin: 0 10px;
+  background: var(--border);
+}
+.hstep--done .hstep__marker {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.hstep--done .hstep__line {
+  background: var(--accent-line);
+}
+.hstep--active .hstep__marker {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0b0e13;
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+.hstep__text {
+  display: flex;
+  flex-direction: column;
+}
+.hstep__label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.hstep--todo .hstep__label {
+  color: var(--muted);
+}
+.hstep__status {
+  font-size: 11px;
+  color: var(--muted);
+}
+.hstep--active .hstep__status {
+  color: var(--accent);
+}
+
+/* Handoff banner (dismissible variant): subtle teal wash, centered message. */
+.hybrid .handoff {
+  background: var(--accent-soft);
+  border-color: rgba(45, 212, 191, 0.42);
+}
+.handoff--hybrid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+  text-align: center;
+}
+.handoff__close {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 4px;
+}
+.handoff__close:hover {
+  color: var(--text);
+}
+
+/* Two-pane body: natural content height so the timeline isn't pushed down. */
+.hybrid__body {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+}
+.hybrid__body.app__empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hybrid__left,
+.hybrid__right {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+}
+/* Map and fleet keep their natural height — don't stretch the map stage into
+   a tall empty box under the aspect-locked image. */
+.hybrid__left > .map {
+  flex: 0 0 auto;
+}
+.hybrid__left > .fleetstrip {
+  flex: 0 0 auto;
+}
+/* Compact empty photo slots so "Not captured yet" doesn't reserve two huge
+   4:3 rectangles. Real images keep the full aspect ratio. */
+.hybrid .photo__placeholder {
+  aspect-ratio: auto;
+  min-height: 72px;
+  max-height: 96px;
+}
+.hybrid .photos {
+  gap: 10px;
+}
+
+/* Image-led alert: crack capture first, compact meta row underneath. */
+.hybrid .surveillance__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hybrid .surveillance__photo {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+/* Match one Welding Robot Photos slot: half the card width at 4:3
+   (same as .photos { 1fr 1fr } + gap 14px). */
+.hybrid .surveillance__img,
+.hybrid .surveillance__photo-fallback {
+  display: block;
+  width: calc((100% - 14px) / 2);
+  max-width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--inset);
+}
+.hybrid .surveillance__photo-fallback {
+  display: grid;
+  place-items: center;
+  object-fit: unset;
+}
+.hybrid .surveillance__caption {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+.hybrid .surveillance__meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0;
+}
+.hybrid .surveillance__meta div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.hybrid .surveillance__meta dt {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.hybrid .surveillance__meta dd {
+  margin: 0;
+  font-weight: 500;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 720px) {
+  .hybrid .surveillance__meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fleet strip (Go2 cards under the map) */
+.fleetstrip {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.fleetstrip__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.fleetstrip__head h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.fleetstrip__cards {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.fleetcard {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--panel);
+}
+.fleetcard__icon {
+  width: 40px;
+  height: 28px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.fleetcard__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.fleetcard__id {
+  font-weight: 600;
+  font-size: 15px;
+}
+.fleetcard__status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.fleetcard__pose {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.fleetcard__actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: nowrap;
+}
+.fleetcard__goto {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  align-items: center;
+}
+.fleetcard__pose-input {
+  width: 52px;
+  padding: 2px 5px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--input, var(--surface));
+  color: var(--text);
+  text-align: right;
+}
+.btn--sm {
+  padding: 3px 9px;
+  font-size: 11px;
+}
+
+/* Horizontal activity timeline — pinned under the body row. Cap its height so
+   a long event list scrolls here instead of shrinking the map/rail. */
+.htimeline {
+  flex: 0 0 auto;
+  max-height: min(220px, 26vh);
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.htimeline__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.htimeline__head h2 {
+  font-size: 15px;
+  margin: 0;
+}
+/* Wrap events into an even, responsive grid instead of a single scrolling row,
+   so nothing is hidden and there's no horizontal scrollbar. */
+.htimeline__track {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.htimeline__item {
+  display: grid;
+  grid-template-columns: auto;
+  gap: 3px;
+  min-width: 0;
+  position: relative;
+  padding-left: 16px;
+}
+.htimeline__dot {
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--panel);
+}
+.htimeline__time {
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.htimeline__type {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.htimeline__actor {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+/* Responsive: collapse to a single column on narrow screens; allow the body
+   to scroll as a unit since stacked map + rail won't fit the shell row. */
+@media (max-width: 1080px) {
+  .hybrid__body {
+    grid-template-columns: 1fr;
+  }
+  .htimeline {
+    max-height: none;
+  }
+  .hstep__label,
+  .hstep__status {
+    font-size: 12px;
+  }
+}

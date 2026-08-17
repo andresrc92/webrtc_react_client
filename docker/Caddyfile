@@ -1,4 +1,4 @@
-{$PUBLIC_HOSTNAME} {
+http://{$PUBLIC_HOSTNAME} {
     encode gzip
 
     # Signaling only — WebRTC media (audio/video) is negotiated over ICE and

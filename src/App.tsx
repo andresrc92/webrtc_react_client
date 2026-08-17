@@ -1,9 +1,11 @@
 import { useCallback, useState } from 'react';
 import { ConnectForm } from './components/ConnectForm';
 import { StreamViewer, type ConnectionState, type StreamTarget } from './components/StreamViewer';
+import { SidePanel } from './components/SidePanel';
 import { defaultStreamConfig } from './config';
 import { SUPPORTED_ISAAC_SIM_VERSIONS } from './isaacSimCompat';
 import './App.css';
+import './sidePanel.css';
 
 // Deep-linkable connect (?server=...&signalingPort=...&mediaPort=...) so a
 // target can be scripted/bookmarked instead of always going through the form.
@@ -45,11 +47,14 @@ function App() {
         )}
       </header>
       <main className="app-main">
-        {target ? (
-          <StreamViewer target={target} onStateChange={handleStateChange} />
-        ) : (
-          <ConnectForm disabled={busy} onConnect={handleConnect} />
-        )}
+        <div className="app-main__content">
+          {target ? (
+            <StreamViewer target={target} onStateChange={handleStateChange} />
+          ) : (
+            <ConnectForm disabled={busy} onConnect={handleConnect} />
+          )}
+        </div>
+        <SidePanel />
       </main>
     </div>
   );
