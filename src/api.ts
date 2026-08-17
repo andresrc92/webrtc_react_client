@@ -46,6 +46,16 @@ export async function listRobots(signal?: AbortSignal): Promise<FleetRobot[]> {
   return body.robots ?? [];
 }
 
+export async function fetchRobotPlan(
+  robotId: string,
+  signal?: AbortSignal,
+): Promise<{ x: number; y: number }[]> {
+  const res = await fetch(`${ROBOTS_URL}/${encodeURIComponent(robotId)}/plan`, { signal });
+  if (!res.ok) throw new Error(`fetch plan ${res.status}`);
+  const body = (await res.json()) as { robotId: string; path: { x: number; y: number }[] };
+  return body.path ?? [];
+}
+
 export async function commandSurveillance(
   robotId: string,
   action: SurveillanceAction,

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createWorkflow, fetchLatestWorkflow, listDetections, listRobots } from "./api";
+import { createWorkflow, fetchLatestWorkflow, fetchRobotPlan, listDetections, listRobots } from "./api";
 import type { DetectionSummary, FleetRobot, WorkflowInstance } from "./types";
 
 export interface WorkflowFeed {
@@ -120,6 +120,53 @@ export function useRobotsFeed(intervalMs = 1000): RobotsFeed {
   }, [intervalMs]);
 
   return { robots, connected };
+}
+
+export interface PlansFeed {
+  plans: Record<string, { x: number; y: number }[]>;
+}
+
+// Polls each robot's planned Nav2 path at 2 Hz so the map overlay stays current
+// while the robot is navigating. Clears automatically when the backend reports
+// an empty path (fleet_client_node publishes [] on route idle/cancel).
+export function usePlansFeed(robotIds: string[], intervalMs = 500): PlansFeed {
+  const [plans, setPlans] = useState<Record<string, { x: number; y: number }[]>>({});
+  const idsKey = robotIds.join(",");
+
+  useEffect(() => {
+    if (!robotIds.length) {
+      setPlans({});
+      return;
+    }
+    let cancelled = false;
+
+    async function tick() {
+      const results = await Promise.allSettled(
+        robotIds.map((id) => fetchRobotPlan(id).then((path) => ({ id, path }))),
+      );
+      if (cancelled) return;
+      setPlans((prev) => {
+        const next = { ...prev };
+        for (const result of results) {
+          if (result.status === "fulfilled") {
+            next[result.value.id] = result.value.path;
+          }
+        }
+        return next;
+      });
+    }
+
+    tick();
+    const timer = window.setInterval(tick, intervalMs);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  // idsKey serialises the array for stable comparison across renders.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idsKey, intervalMs]);
+
+  return { plans };
 }
 
 export interface DetectionsFeed {

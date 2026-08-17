@@ -147,6 +147,20 @@
   padding: 4px 10px;
   font-size: 11px;
 }
+.side-panel .btn--active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.side-panel .btn--danger {
+  background: rgba(248, 81, 73, 0.12);
+  color: var(--bad);
+  border-color: rgba(248, 81, 73, 0.3);
+}
+.side-panel .btn--danger:hover:not(:disabled) {
+  background: rgba(248, 81, 73, 0.22);
+  border-color: var(--bad);
+}
 
 /* Map */
 .side-panel .map__stage {
@@ -210,6 +224,48 @@
 .side-panel .marker--alert .marker__dot {
   background: var(--warn);
 }
+.side-panel .marker--goal .marker__dot {
+  background: #e53935;
+  border-color: #fff;
+}
+.side-panel .marker--goal .marker__label {
+  color: #e53935;
+}
+.side-panel .marker--pending .marker__dot {
+  background: transparent;
+  border: 2px dashed #e53935;
+  animation: side-panel-marker-pulse 0.8s ease-in-out infinite alternate;
+}
+.side-panel .marker--pending .marker__label {
+  color: #e53935;
+}
+@keyframes side-panel-marker-pulse {
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(1.35); opacity: 0.65; }
+}
+.side-panel .marker--home {
+  color: var(--accent);
+}
+.side-panel .marker__home-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.side-panel .marker--home .marker__label {
+  color: var(--accent);
+}
+
+/* Click-to-aim map mode + robot plan paths */
+.side-panel .map__frame--clickmode {
+  cursor: crosshair;
+}
+.side-panel .map__plan-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 
 /* Fleet strip (Go2 cards) */
 .side-panel .fleetstrip {
@@ -241,6 +297,10 @@
   border-radius: 12px;
   padding: 14px;
   background: var(--panel);
+}
+.side-panel .fleetcard--aiming {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 .side-panel .fleetcard__icon {
   width: 40px;
@@ -276,6 +336,28 @@
   gap: 6px;
   margin-top: 8px;
   flex-wrap: nowrap;
+}
+.side-panel .fleetcard__goto {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.side-panel .fleetcard__pose-input {
+  flex: 1 1 44px;
+  min-width: 36px;
+  max-width: 58px;
+  padding: 2px 5px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--text);
+  text-align: right;
+}
+.side-panel .fleetcard__goto .btn--sm {
+  flex-shrink: 0;
 }
 
 /* Go2 capture image */

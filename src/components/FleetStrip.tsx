@@ -9,20 +9,22 @@ interface PoseInput {
   theta: string;
 }
 
-// Default home = sim spawn position for each robot.
+// Default home = map-frame spawn position for each robot (matches initial_pose in multi_robot_nav.launch.py).
 const DEFAULT_HOME: Record<string, PoseInput> = {
-  go2_a: { x: "-40", y: "-15", theta: "0" },
-  go2_b: { x: "43", y: "27", theta: "180" },
+  go2_a: { x: "0", y: "0", theta: "0" },
+  go2_b: { x: "83", y: "42", theta: "180" },
 };
 
 interface Props {
   robots: FleetRobot[];
   busyRobot: string | null;
   onCommand: (robotId: string, action: SurveillanceAction, pose?: { x: number; y: number; theta: number }) => void;
+  aimingRobotId?: string | null;
+  onAimToggle?: (robotId: string) => void;
 }
 
 // Horizontal fleet strip under the map: Go2 dogs + welding robot when present.
-export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
+export function FleetStrip({ robots, busyRobot, onCommand, aimingRobotId, onAimToggle }: Props) {
   const ordered = [...robots].sort((a, b) => a.robotId.localeCompare(b.robotId));
   const [poseInputs, setPoseInputs] = useState<Record<string, PoseInput>>({});
   const [homeInputs, setHomeInputs] = useState<Record<string, PoseInput>>({});
@@ -83,9 +85,11 @@ export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
           {ordered.map((robot) => {
             const busy = busyRobot === robot.robotId;
             const active = isActive(robot.status);
+            const isRunning = (robot.status ?? "").toLowerCase() === "running";
             const isWelder = robot.robotType === "welding_robot";
+            const isAiming = aimingRobotId === robot.robotId;
             return (
-              <article key={robot.robotId} className="fleetcard">
+              <article key={robot.robotId} className={`fleetcard${isAiming ? " fleetcard--aiming" : ""}`}>
                 <Go2Icon className="fleetcard__icon" />
                 <div className="fleetcard__body">
                   <span className="fleetcard__id">{robot.robotId}</span>
@@ -101,7 +105,7 @@ export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
                         <button
                           className="btn btn--primary btn--sm"
                           onClick={() => onCommand(robot.robotId, "start")}
-                          disabled={busy}
+                          disabled={busy || isRunning}
                         >
                           Start
                         </button>
@@ -110,6 +114,13 @@ export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
                           onClick={() => onCommand(robot.robotId, "cancel")}
                         >
                           Cancel
+                        </button>
+                        <button
+                          className={`btn btn--sm${isAiming ? " btn--active" : ""}`}
+                          onClick={() => onAimToggle?.(robot.robotId)}
+                          title="Click the map to set a navigation target"
+                        >
+                          {isAiming ? "Cancel Aim" : "Aim"}
                         </button>
                       </div>
                       <div className="fleetcard__goto">
@@ -140,9 +151,15 @@ export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
                         <button
                           className="btn btn--sm"
                           onClick={() => handleGoToPose(robot.robotId)}
-                          disabled={busy || !getPose(robot.robotId).x || !getPose(robot.robotId).y}
+                          disabled={busy || isRunning || !getPose(robot.robotId).x || !getPose(robot.robotId).y}
                         >
                           Go
+                        </button>
+                        <button
+                          className="btn btn--sm btn--danger"
+                          onClick={() => onCommand(robot.robotId, "cancel")}
+                        >
+                          Cancel
                         </button>
                       </div>
                       <div className="fleetcard__goto">
@@ -173,9 +190,15 @@ export function FleetStrip({ robots, busyRobot, onCommand }: Props) {
                         <button
                           className="btn btn--sm"
                           onClick={() => handleGoHome(robot.robotId)}
-                          disabled={busy}
+                          disabled={busy || isRunning}
                         >
                           Home
+                        </button>
+                        <button
+                          className="btn btn--sm btn--danger"
+                          onClick={() => onCommand(robot.robotId, "cancel")}
+                        >
+                          Cancel
                         </button>
                       </div>
                     </>
