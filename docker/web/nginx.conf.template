@@ -1,0 +1,44 @@
+##
+# Reverse-proxies the same paths the Vite dev server proxies (see
+# vite.config.ts), so the built app stays same-origin and never has to rely
+# on the frost backend / sim_events_server.py sending CORS headers (they
+# don't — see README). The upstream host:port placeholders below are filled
+# in by the nginx image's docker-entrypoint envsubst-on-templates step, from
+# the "web" container's environment (see docker-compose.yml).
+##
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location /api/ {
+        proxy_pass http://${BACKEND_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    location /robots {
+        proxy_pass http://${BACKEND_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    location /detections {
+        proxy_pass http://${BACKEND_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    location /camera {
+        proxy_pass http://${CAMERA_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+    location /viewport {
+        proxy_pass http://${CAMERA_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
