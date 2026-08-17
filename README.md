@@ -148,6 +148,14 @@ This starts three containers:
 Isaac Sim itself is **not** containerized here — it's expected to be running
 separately on its own GPU box, reachable at `ISAAC_SIM_HOST`.
 
+Unlike `npm run dev`, nginx does not proxy `/api`, `/robots`, `/detections`,
+`/camera` or `/viewport` — there's no dev-server proxy config to fall back
+on in a static build. So the side-panel backend URLs (frost console **:8000**,
+`sim_events_server.py` **:8227**) are baked in at build time via `VITE_API_BASE`
+/ `VITE_CAMERA_BASE`, which `docker-compose.yml` sets from `ISAAC_SIM_HOST` by
+default. Set `BACKEND_HOST`/`SIM_EVENTS_HOST` (and `_PORT` variants) in `.env`
+if those run somewhere other than the Isaac Sim box.
+
 ## Project layout
 
 ```

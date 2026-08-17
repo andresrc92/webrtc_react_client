@@ -23,8 +23,29 @@ function targetFromSearchParams(): StreamTarget | null {
   };
 }
 
+// VITE_ISAAC_SIM_SERVER (docker-compose bakes this in from ISAAC_SIM_HOST) is
+// a known, fixed deployment target, so default straight to it instead of
+// making the operator retype an IP the build already knows. Still
+// overridable via the ?server= deep link above, and via Disconnect ->
+// ConnectForm for a one-off different target.
+function targetFromDefaultConfig(): StreamTarget | null {
+  if (!defaultStreamConfig.server) return null;
+  return {
+    server: defaultStreamConfig.server,
+    signalingPort: defaultStreamConfig.signalingPort,
+    mediaPort: defaultStreamConfig.mediaPort,
+    width: defaultStreamConfig.width,
+    height: defaultStreamConfig.height,
+    fps: defaultStreamConfig.fps,
+  };
+}
+
+function initialTarget(): StreamTarget | null {
+  return targetFromSearchParams() ?? targetFromDefaultConfig();
+}
+
 function App() {
-  const [target, setTarget] = useState<StreamTarget | null>(targetFromSearchParams);
+  const [target, setTarget] = useState<StreamTarget | null>(initialTarget);
   const [state, setState] = useState<ConnectionState>('stopped');
 
   const handleConnect = useCallback((next: StreamTarget) => setTarget(next), []);

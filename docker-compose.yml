@@ -8,6 +8,13 @@ services:
         VITE_ISAAC_SIM_SIGNAL_PORT: ${ISAAC_SIGNAL_PORT:-49100}
         VITE_ISAAC_SIM_MEDIA_PORT: ${ISAAC_MEDIA_PORT:-47998}
         VITE_FORCE_WSS: "false"
+        # Side-panel backends (frost console + sim_events_server.py). Unlike
+        # the Vite dev server, nginx does not proxy these, so the built app
+        # needs the real host:port baked in. Both default to ISAAC_SIM_HOST
+        # since frost and sim_events_server.py normally run alongside Isaac
+        # Sim; override BACKEND_HOST/SIM_EVENTS_HOST if they run elsewhere.
+        VITE_API_BASE: http://${BACKEND_HOST:-${ISAAC_SIM_HOST}}:${BACKEND_PORT:-8000}
+        VITE_CAMERA_BASE: http://${SIM_EVENTS_HOST:-${ISAAC_SIM_HOST}}:${SIM_EVENTS_PORT:-8227}
     ports:
       - "5555:80"
     restart: unless-stopped
