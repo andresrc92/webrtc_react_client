@@ -21,5 +21,5 @@ services:
       BACKEND_UPSTREAM: ${BACKEND_HOST:-${ISAAC_SIM_HOST}}:${BACKEND_PORT:-8000}
       CAMERA_UPSTREAM: ${SIM_EVENTS_HOST:-${ISAAC_SIM_HOST}}:${SIM_EVENTS_PORT:-8227}
     ports:
-      - "5555:80"
+      - "5556:80"
     restart: unless-stopped
